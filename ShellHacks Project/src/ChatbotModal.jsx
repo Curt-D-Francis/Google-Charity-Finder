@@ -1,19 +1,59 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-import axios from "axios";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import "./App.css";
 
 Modal.setAppElement("#root");
 
 function ChatbotModal({ isOpen, onRequestClose, charityName }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [chat, setChat] = useState(null); // Store chat instance
 
   useEffect(() => {
-    if (isOpen && charityName) {
-      // Display an initial message to the user
-      const initialMessage = `What would you like to know about ${charityName}?`;
-      setMessages([{ sender: "bot", text: initialMessage }]);
-    }
+    // Initialize chat instance when the modal opens and `charityName` is available
+    const initChat = async () => {
+      if (isOpen && charityName) {
+        try {
+          const genAI = new GoogleGenerativeAI(
+            import.meta.env.VITE_GOOGLE_GENERATIVE_AI_KEY
+          );
+          const model = genAI.getGenerativeModel({
+            model: "gemini-1.5-flash",
+          });
+
+          // Start the chat with context
+          const chatInstance = model.startChat({
+            history: [
+              {
+                role: "user",
+                parts: [
+                  {
+                    text: `You are an assistant knowledgeable about charities. You will provide users with information about whichever charity/donation location
+                    you are given. Do not refer to other sources for more information. If you have absolutely no information on the location,
+                    then you can attempt to assume what they do by their name, while also refering to other sources for more information.
+                    If you believe it is a local business, you can just say that it is likely a local business, and to try to visit their website or other
+                    means of contacting them if interested in donating. Please assume based of the name what they potentially do instead of defaulting to other sources
+                    of information.
+                    Please provide information specifically about the charity named ${charityName}.`,
+                  },
+                ],
+              },
+            ],
+          });
+
+          setChat(chatInstance); // Save chat instance for later use
+
+          // Display an initial message to the user
+          const initialMessage = `What would you like to know about ${charityName}?`;
+          setMessages([{ sender: "bot", text: initialMessage }]);
+        } catch (error) {
+          console.error("Failed to initialize chat:", error);
+        }
+      }
+    };
+
+    initChat();
   }, [isOpen, charityName]);
 
   const handleSendMessage = async () => {
@@ -24,10 +64,13 @@ function ChatbotModal({ isOpen, onRequestClose, charityName }) {
 
     try {
       // Send the user's message to the proxy server
-      const response = await axios.post("http://ec2-18-119-248-206.us-east-2.compute.amazonaws.com:5000/api/generative-ai", {
-        model: 'gemini-1.5-flash',
-        message: input,
-      });
+      const response = await axios.post(
+        "http://ec2-18-119-248-206.us-east-2.compute.amazonaws.com:5000/api/generative-ai",
+        {
+          model: "gemini-1.5-flash",
+          message: input,
+        }
+      );
 
       const botMessage = { sender: "bot", text: response.data.responseText };
       setMessages((prevMessages) => [...prevMessages, botMessage]);
