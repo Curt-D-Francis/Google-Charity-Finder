@@ -67,7 +67,7 @@ function Globe() {
       if (!document.querySelector("script[src*='maps.googleapis.com']")) {
         const script = document.createElement("script");
         script.src = `https://maps.googleapis.com/maps/api/js?key=${
-          import.meta.env.VITE_GOOGLE_MAP_GEN_KEY
+          import.meta.env.GOOGLE_MAP_GEN_KEY
         }&libraries=places,geometry&callback=initMap`;
         script.async = true;
 
@@ -83,7 +83,7 @@ function Globe() {
             try {
               // Make a request to your Express proxy server
               const response = await axios.get(
-                "http://localhost:5000/api/maps",
+                "http://ec2-18-119-248-206.us-east-2.compute.amazonaws.com:5000/api/maps",
                 {
                   params: {
                     location: `${location.lat()},${location.lng()}`, // Lat/lng from Google Maps click event
