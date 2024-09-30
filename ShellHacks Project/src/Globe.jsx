@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import axios from "axios"; // Import axios
+import axios from "axios";
 import StarBackground from "./Stars";
 import ChatbotModal from "./ChatbotModal";
 import "./App.css";
@@ -32,7 +32,7 @@ function Globe() {
 
     setScene(scene);
     const textureLoader = new THREE.TextureLoader();
-    const earthTexture = textureLoader.load("/1_earth_16k.jpg");
+    const earthTexture = textureLoader.load("/2_no_clouds_16k.jpg");
 
     const geometry = new THREE.SphereGeometry(4, 48, 48);
     const material = new THREE.MeshBasicMaterial({ map: earthTexture });
@@ -67,7 +67,7 @@ function Globe() {
       if (!document.querySelector("script[src*='maps.googleapis.com']")) {
         const script = document.createElement("script");
         script.src = `https://maps.googleapis.com/maps/api/js?key=${
-          import.meta.env.GOOGLE_MAP_GEN_KEY
+          import.meta.env.VITE_GOOGLE_MAP_GEN_KEY
         }&libraries=places,geometry&callback=initMap`;
         script.async = true;
 
