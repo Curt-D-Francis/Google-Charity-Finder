@@ -83,7 +83,7 @@ function Globe() {
             try {
               // Make a request to your Express proxy server
               const response = await axios.get(
-                "http://ec2-18-119-248-206.us-east-2.compute.amazonaws.com:5000/api/maps",
+                "https://ec2-18-119-248-206.us-east-2.compute.amazonaws.com:5000/api/maps",
                 {
                   params: {
                     location: `${location.lat()},${location.lng()}`, // Lat/lng from Google Maps click event

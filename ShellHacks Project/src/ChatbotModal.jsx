@@ -65,7 +65,7 @@ function ChatbotModal({ isOpen, onRequestClose, charityName }) {
     try {
       // Send the user's message to the proxy server
       const response = await axios.post(
-        "http://ec2-18-119-248-206.us-east-2.compute.amazonaws.com:5000/api/generative-ai",
+        "https://ec2-18-119-248-206.us-east-2.compute.amazonaws.com:5000/api/generative-ai",
         {
           model: "gemini-1.5-flash",
           message: input,
